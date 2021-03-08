@@ -188,23 +188,31 @@ var teamData = {
   ],
 };
 
-//********/ Header /************//
-var homeLink = document.createElement("a");
-var logoDiv = document.createElement("div");
-var header = document.querySelector("header");
-var logo = document.createElement("img");
-var logoUrl = teamData.logo;
+function createEl(type, path, altName, cssClass) {
+  var element = document.createElement(type);
 
-// Creating div for logo
-logoDiv.classList.add("logo");
-header.append(logoDiv);
-homeLink.setAttribute("href", "#");
-logoDiv.append(homeLink);
+  if (type === "img") {
+    element.setAttribute("src", path);
+    element.setAttribute("alt", altName);
+    if (cssClass) {
+      element.classList.add(cssClass);
+    }
+    return element;
+  } else {
+    element.textContent = path;
+    element.classList.add(cssClass);
+    return element;
+  }
+}
+function createHeader() {
+  var header = document.querySelector("header");
+  var logoDiv = createEl("div", "", "", "logo");
+  var logo = createEl("img", teamData.logo, "AC Milan logo", "");
 
-// Adding logo image
-logo.setAttribute("src", logoUrl);
-logo.setAttribute("alt", "AC Milan logo");
-homeLink.append(logo);
+  logoDiv.append(logo);
+
+  header.append(logoDiv);
+}
 
 //********/ Main /************//
 var headingTeamName = document.createElement("h1");
@@ -371,20 +379,4 @@ function swapPlayers(firstArr, secondArr) {
 
 setInterval(() => {
   swapPlayers(team, reservePlayers);
-
-  // 2nd option to create whole section again,it's easier to read but this is not optmial way
-
-  // var $firstTeam = document.querySelector('section.first-squad');
-  // var $secondTeam = document.querySelector('section.reserve');
-
-  // $firstTeam.remove(); //
-  // structureSectionAndDivs('first-squad', 'First squad');
-
-  // // Construction layout of cards for each player in first team
-  // team.forEach(createStructureForPlayersCard)
-
-  // $secondTeam.remove();
-  // structureSectionAndDivs('reserve', 'Reserve players');
-  // // Construction layout of cards for each player in reserve
-  // reservePlayers.forEach(createStructureForPlayersCard)
 }, 3000);
