@@ -68,7 +68,7 @@ var teamData = {
     {
       image: "./img/1.png",
       name: "Dida",
-      lastName: undefined,
+      lastName: "/",
       playerNumber: 12,
       position: "Goalkeeper",
       age: 47,
@@ -76,7 +76,7 @@ var teamData = {
     {
       image: "./img/2.png",
       name: "Cafú",
-      lastName: undefined,
+      lastName: "/",
       playerNumber: 2,
       position: "Defender",
       age: 50,
@@ -100,7 +100,7 @@ var teamData = {
     {
       image: "./img/5.png",
       name: "Serginho",
-      lastName: undefined,
+      lastName: "/",
       playerNumber: 27,
       position: "Defender",
       age: 49,
@@ -132,7 +132,7 @@ var teamData = {
     {
       image: "./img/9.png",
       name: "Kaká",
-      lastName: undefined,
+      lastName: "/",
       playerNumber: 22,
       position: "Midfielder",
       age: 38,
@@ -187,90 +187,46 @@ var teamData = {
     },
   ],
 };
+var main = document.querySelector("main");
 
-function createEl(type, path, altName, cssClass) {
-  var element = document.createElement(type);
-
-  if (type === "img") {
-    element.setAttribute("src", path);
-    element.setAttribute("alt", altName);
-    if (cssClass) {
-      element.classList.add(cssClass);
-    }
-    return element;
-  } else {
-    element.textContent = path;
-    element.classList.add(cssClass);
-    return element;
-  }
-}
 function createHeader() {
   var header = document.querySelector("header");
-  var logoDiv = createEl("div", "", "", "logo");
-  var logo = createEl("img", teamData.logo, "AC Milan logo", "");
-
-  logoDiv.append(logo);
-
-  header.append(logoDiv);
+  var logo =
+    '<div class="logo"><img src="' +
+    teamData.logo +
+    '" alt="AC Milan logo"/></div>';
+  header.innerHTML = logo;
 }
 
-//********/ Main /************//
-var headingTeamName = document.createElement("h1");
-var subHeading = document.createElement("p");
-var main = document.querySelector("main");
-var teamName = teamData.teamName;
-var seasonYear = teamData.season;
-var team = teamData.squad;
+function createEl(type, path, cssClass) {
+  var element = document.createElement(type);
 
-// shuffle original array
-shuffle(team);
+  element.textContent = path;
+  if (cssClass) {
+    element.classList.add(cssClass);
+  }
+  return element;
+}
 
-// Getting last 4 players from team in reserve and others is first-squad
-var reservePlayers = team.splice(11, 4);
+function createMain(arr) {
+  var firstSqdSection = createEl("section", "", "first-squad");
+  var reserveSqdSection = createEl("section", "", "reserve");
+  var teamName = createEl("h1", arr.teamName);
+  var season = createEl("p", "Season " + arr.season, "sub-heading");
+  var reservePlayers = shuffle(arr.squad).splice(11, 4);
 
-// Adding team name to page
-headingTeamName.innerText = teamName;
-main.append(headingTeamName);
+  main.prepend(teamName, season);
 
-// Adding paragraph with season year
-subHeading.classList.add("sub-heading");
-subHeading.innerText = "Season " + seasonYear;
-main.append(subHeading);
+  firstSqdSection.prepend(createEl("h4", "First squad"), getPlayers(arr.squad));
 
-// Create section with heading
-structureSectionAndDivs("first-squad", "First squad");
+  main.append(firstSqdSection);
 
-// Construction layout of cards for each player in first team
-team.forEach(function (t, index) {
-  createStructureForPlayersCard(t, index, "first_team");
-});
+  reserveSqdSection.prepend(
+    createEl("h4", "Reserve squad"),
+    getPlayers(reservePlayers)
+  );
 
-// Create section with heading
-structureSectionAndDivs("reserve", "Reserve players");
-
-// Construction layout of cards for each player in reserve
-reservePlayers.forEach(function (t, index) {
-  createStructureForPlayersCard(t, index, "reserve_team");
-});
-
-//*******/ Functions for MAIN part /********//
-function structureSectionAndDivs(sectionCssClass, innerText) {
-  var section = document.createElement("section");
-  var h4 = document.createElement("h4");
-  var div = document.createElement("div");
-  var main = document.querySelector("main");
-
-  // Adding section with class to main
-  section.className = sectionCssClass;
-  main.append(section);
-
-  // Adding header for section
-  h4.innerText = innerText;
-  section.append(h4);
-
-  // Create wrapper for player cards in section
-  div.className = "wrapper";
-  section.append(div);
+  main.append(reserveSqdSection);
 }
 
 function shuffle(arr) {
@@ -278,105 +234,61 @@ function shuffle(arr) {
     var j = Math.floor(Math.random() * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
+  return arr;
 }
 
-function createStructureForPlayersCard(e, index, dataTag) {
-  var card = document.createElement("article");
-  var playerImage = document.createElement("img");
-  var div = document.createElement("div");
-  var ul = document.createElement("ul");
+function getPlayers(team) {
+  var wrapper = createEl("div", "", "wrapper");
 
-  // Adding class to article
-  card.className = "player-card";
-  card.setAttribute("data-index-" + dataTag, index);
+  team.forEach(function (player) {
+    wrapper.append(playerCard(player));
+  });
 
-  // Adding image of player
-  playerImage.setAttribute("src", e.image);
-  playerImage.setAttribute("alt", e.name);
-  card.append(playerImage);
-
-  // Adding div with player info
-  div.className = "info";
-  div.append(ul);
-
-  // Inner list items for informations about player
-  for (var i = 0; i < 5; i++) {
-    var li = document.createElement("li");
-    ul.append(li);
-  }
-
-  ul.children[0].innerText = "Name: " + e.name;
-  ul.children[1].innerText = e.lastName
-    ? "Last name: " + e.lastName
-    : "Last name: /";
-  ul.children[2].innerText = "Number: " + e.playerNumber;
-  ul.children[3].innerText = "Position: " + e.position;
-  ul.children[4].innerText = "Age: " + e.age;
-
-  card.append(div);
-
-  main.lastChild.lastChild.append(card);
+  return wrapper;
 }
 
-function swapPlayers(firstArr, secondArr) {
-  var randomIndexFA = Math.floor(Math.random() * firstArr.length);
-  var randomIndexSA = Math.floor(Math.random() * secondArr.length);
+function playerCard(player) {
+  var card = createEl("article", "", "player-card");
+  var image = '<img src="' + player.image + '" alt="' + player.name + '"/>';
+  var cardInfo = createEl("div", "", "info");
+  var firstName = createEl("p", "Name: " + player.name);
+  var lastName = createEl("p", "Last name: " + player.lastName);
+  var playerNumber = createEl("p", "Number: " + player.playerNumber);
+  var position = createEl("p", "Position: " + player.position);
+  var age = createEl("p", "Age: " + player.age);
 
-  var temp = firstArr[randomIndexFA];
-  firstArr[randomIndexFA] = secondArr[randomIndexSA];
-  secondArr[randomIndexSA] = temp;
+  card.innerHTML = image;
 
-  var oldFirstTeamPlayer = document.querySelector(
-    "[data-index-first_team='" + randomIndexFA + "'] > .info"
-  );
-  var oldFirstTeamPlayerImg = document.querySelector(
-    "[data-index-first_team='" + randomIndexFA + "'] > img"
-  );
+  cardInfo.prepend(firstName, lastName, playerNumber, position, age);
 
-  var oldReserveTeamPlayer = document.querySelector(
-    "[data-index-reserve_team='" + randomIndexSA + "'] > .info"
-  );
-  var oldReserveTeamPlayerImg = document.querySelector(
-    "[data-index-reserve_team='" + randomIndexSA + "'] > img"
-  );
-
-  // set new first player
-  oldFirstTeamPlayerImg.setAttribute("src", firstArr[randomIndexFA].image);
-  oldFirstTeamPlayerImg.setAttribute("alt", firstArr[randomIndexFA].firstName);
-  oldFirstTeamPlayer.children[0].children[0].innerText =
-    "Name: " + firstArr[randomIndexFA].name;
-  oldFirstTeamPlayer.children[0].children[1].innerText = firstArr[randomIndexFA]
-    .lastName
-    ? "Last name: " + firstArr[randomIndexFA].lastName
-    : "Last name: /";
-  oldFirstTeamPlayer.children[0].children[2].innerText =
-    "Number: " + firstArr[randomIndexFA].playerNumber;
-  oldFirstTeamPlayer.children[0].children[3].innerText =
-    "Position: " + firstArr[randomIndexFA].position;
-  oldFirstTeamPlayer.children[0].children[4].innerText =
-    "Age: " + firstArr[randomIndexFA].age;
-
-  // set new reserve player
-  oldReserveTeamPlayerImg.setAttribute("src", secondArr[randomIndexSA].image);
-  oldReserveTeamPlayerImg.setAttribute(
-    "alt",
-    secondArr[randomIndexSA].firstName
-  );
-  oldReserveTeamPlayer.children[0].children[0].innerText =
-    "Name: " + secondArr[randomIndexSA].name;
-  oldReserveTeamPlayer.children[0].children[1].innerText = secondArr[
-    randomIndexSA
-  ].lastName
-    ? "Last name: " + secondArr[randomIndexSA].lastName
-    : "Last name: /";
-  oldReserveTeamPlayer.children[0].children[2].innerText =
-    "Number: " + secondArr[randomIndexSA].playerNumber;
-  oldReserveTeamPlayer.children[0].children[3].innerText =
-    "Position: " + secondArr[randomIndexSA].position;
-  oldReserveTeamPlayer.children[0].children[4].innerText =
-    "Age: " + secondArr[randomIndexSA].age;
+  card.append(cardInfo);
+  return card;
 }
+function getRandom(arr) {
+  return Math.floor(Math.random() * arr.length);
+}
+//Change players
+function swapPlayers() {
+  var firstSqdPlayers = document.querySelectorAll(".first-squad div article");
+  var reserve = document.querySelectorAll(".reserve div article");
 
-setInterval(() => {
-  swapPlayers(team, reservePlayers);
-}, 3000);
+  var firstPlayer = firstSqdPlayers[getRandom(firstSqdPlayers)];
+  var reservePlayer = reserve[getRandom(reserve)];
+
+  var previousReservePlayer = reservePlayer.previousSibling;
+  var nextReservePlayer = reservePlayer.nextSibling;
+
+  firstPlayer.classList.toggle("red-border");
+  reservePlayer.classList.toggle("green-border");
+  setTimeout(() => {
+    firstPlayer.classList.toggle("red-border");
+    reservePlayer.classList.toggle("green-border");
+  }, 4000);
+  firstPlayer.before(reservePlayer);
+  previousReservePlayer
+    ? previousReservePlayer.after(firstPlayer)
+    : nextReservePlayer.before(firstPlayer);
+}
+createHeader();
+createMain(teamData);
+setInterval(swapPlayers, 5000);
