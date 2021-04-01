@@ -1,66 +1,4 @@
-/*
-WHAT SHOULD YOU DO ?
-
-- Create a page displaying profiles of 15 players of your favorite football team
-
-
-PAGE STRUCTURE
-
-- Page should have a header on the top, containing team logo on the left of the header
-
-- Below the header there should be a team name
-
-- Below that there should be a section displaying first squad players (11 of them in total, 4 players in a row)
-
-- Below that there should be section displaying reserve players
-
-- Each player profile should contain image, name, last name, player number, position and age in following format:
-
-image
-
-Name: Ronaldinho
-Last name: Gaucho
-Number: 9
-Position: Forward
-Age: 27
-
-- Each time page reloads random 11 players should be selected for starting squad, the rest of them should be in reserves
-
-
-FOLDER STRUCTURE
-
-- You should have main folder called FootballPlayers
-
-- Inside of that you should have index.html file, as well as css, js and images folders
-
-
-DATA STRUCTURE
-
-- There should be an object containing team data
-
-- It should contain team name, team logo path, and players properties
-
-- Players property should be an array of objects
-
-- Each object should contain single player data (Name, Last name, Number etc.)
-
-
-HOW PAGE SHOULD BE CONSTRUCTED
-
-- In the start in the HTML file you should have only container elements, like header, main section and similar elements you may need
-
-!!! IMPORTANT !!!
-
-- All other elements, like logo, team name, and player profiles should be added from JS, using data from existing team object
-
-
-BONUS - PLAYER SUBSTITUTION :)
-
-Each 60 seconds one random player from starting squad should be replaced with random player from reserves
-
-*/
-
-var teamData = {
+const teamData = {
   teamName: "AC Milan",
   logo: "./img/logo.png",
   season: "2004/2005",
@@ -187,33 +125,31 @@ var teamData = {
     },
   ],
 };
-var main = document.querySelector("main");
+const main = document.querySelector("main");
+const subBox = document.querySelector(".substitution-box");
+const subBtn = document.querySelector("button");
+const progressBar = document.querySelector(".inner");
 
-function createHeader() {
-  var header = document.querySelector("header");
-  var logo =
-    '<div class="logo"><img src="' +
-    teamData.logo +
-    '" alt="AC Milan logo"/></div>';
+const createHeader = () => {
+  const header = document.querySelector("header");
+  const logo = `<div class="logo"><img src="${teamData.logo}" alt="AC Milan logo"/></div>`;
   header.innerHTML = logo;
-}
+};
 
-function createEl(type, path, cssClass) {
-  var element = document.createElement(type);
+const createEl = (type, path, cssClass) => {
+  const element = document.createElement(type);
 
   element.textContent = path;
-  if (cssClass) {
-    element.classList.add(cssClass);
-  }
+  cssClass ? element.classList.add(cssClass) : null;
   return element;
-}
+};
 
-function createMain(arr) {
-  var firstSqdSection = createEl("section", "", "first-squad");
-  var reserveSqdSection = createEl("section", "", "reserve");
-  var teamName = createEl("h1", arr.teamName);
-  var season = createEl("p", "Season " + arr.season, "sub-heading");
-  var reservePlayers = shuffle(arr.squad).splice(11, 4);
+const createMain = (arr) => {
+  const firstSqdSection = createEl("section", "", "first-squad");
+  const reserveSqdSection = createEl("section", "", "reserve");
+  const teamName = createEl("h1", arr.teamName);
+  const season = createEl("p", `Season ${arr.season}`, "sub-heading");
+  const reservePlayers = shuffle(arr.squad).splice(11, 4);
 
   main.prepend(teamName, season);
 
@@ -227,35 +163,33 @@ function createMain(arr) {
   );
 
   main.append(reserveSqdSection);
-}
+};
 
-function shuffle(arr) {
-  for (var i = arr.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
+const shuffle = (arr) => {
+  for (let i = arr.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
-}
+};
 
-function getPlayers(team) {
-  var wrapper = createEl("div", "", "wrapper");
+const getPlayers = (team) => {
+  const wrapper = createEl("div", "", "wrapper");
 
-  team.forEach(function (player) {
-    wrapper.append(playerCard(player));
-  });
+  team.forEach((player) => wrapper.append(playerCard(player)));
 
   return wrapper;
-}
+};
 
-function playerCard(player) {
-  var card = createEl("article", "", "player-card");
-  var image = '<img src="' + player.image + '" alt="' + player.name + '"/>';
-  var cardInfo = createEl("div", "", "info");
-  var firstName = createEl("p", "Name: " + player.name);
-  var lastName = createEl("p", "Last name: " + player.lastName);
-  var playerNumber = createEl("p", "Number: " + player.playerNumber);
-  var position = createEl("p", "Position: " + player.position);
-  var age = createEl("p", "Age: " + player.age);
+const playerCard = (player) => {
+  const card = createEl("article", "", "player-card");
+  const image = `<img src="${player.image}" alt="${player.name}"/>`;
+  const cardInfo = createEl("div", "", "info");
+  const firstName = createEl("p", `Name: ${player.name}`);
+  const lastName = createEl("p", `Last name: ${player.lastName}`);
+  const playerNumber = createEl("p", `Number: ${player.playerNumber}`);
+  const position = createEl("p", `Position: ${player.position}`);
+  const age = createEl("p", `Age: ${player.age}`);
 
   card.innerHTML = image;
 
@@ -263,32 +197,85 @@ function playerCard(player) {
 
   card.append(cardInfo);
   return card;
-}
-function getRandom(arr) {
-  return Math.floor(Math.random() * arr.length);
-}
+};
+
+const getRandom = (arr) => Math.floor(Math.random() * arr.length);
+
 //Change players
-function swapPlayers() {
-  var firstSqdPlayers = document.querySelectorAll(".first-squad div article");
-  var reserve = document.querySelectorAll(".reserve div article");
+const swapPlayers = () => {
+  const firstSqdPlayers = document.querySelectorAll(".first-squad div article");
+  const reserve = document.querySelectorAll(".reserve div article");
 
-  var firstPlayer = firstSqdPlayers[getRandom(firstSqdPlayers)];
-  var reservePlayer = reserve[getRandom(reserve)];
+  let firstPlayer = firstSqdPlayers[getRandom(firstSqdPlayers)];
+  let reservePlayer = reserve[getRandom(reserve)];
 
-  var previousReservePlayer = reservePlayer.previousSibling;
-  var nextReservePlayer = reservePlayer.nextSibling;
+  let previousReservePlayer = reservePlayer.previousSibling;
+  let nextReservePlayer = reservePlayer.nextSibling;
 
   firstPlayer.classList.toggle("red-border");
   reservePlayer.classList.toggle("green-border");
+
   setTimeout(() => {
     firstPlayer.classList.toggle("red-border");
     reservePlayer.classList.toggle("green-border");
   }, 4000);
+
   firstPlayer.before(reservePlayer);
   previousReservePlayer
     ? previousReservePlayer.after(firstPlayer)
     : nextReservePlayer.before(firstPlayer);
-}
+
+  return [firstPlayer, reservePlayer];
+};
+
+const getSwapedPlayers = (swapPlayers) => {
+  const substitutionIn = document.querySelector("div.in > p");
+  const substitutionOut = document.querySelector("div.out > p");
+  let [outPlayer, inPlayer] = swapPlayers;
+
+  substitutionOut.innerHTML =
+    outPlayer.lastChild.childNodes[2].innerHTML.slice(7) +
+    outPlayer.lastChild.firstChild.innerHTML.slice(5);
+  substitutionIn.innerHTML =
+    inPlayer.lastChild.childNodes[2].innerHTML.slice(7) +
+    inPlayer.lastChild.firstChild.innerHTML.slice(5);
+};
+
+subBtn.addEventListener("click", () => {
+  progressBar.removeAttribute("class");
+  clearInterval(window.subTimer);
+  getSwapedPlayers(swapPlayers());
+
+  setTimeout(() => {
+    timer();
+    progressBar.setAttribute("class", "inner");
+  }, 1);
+});
+
+const timer = () => {
+  const nextSubTime = document.querySelector(
+    ".substitution-timer > p:nth-child(2)"
+  );
+  let startTime = 60;
+
+  nextSubTime.innerHTML = `${startTime}s`;
+
+  window.subTimer = setInterval(() => {
+    startTime === 1 ? (startTime = 60) : startTime--;
+
+    nextSubTime.innerHTML = `${startTime}s`;
+  }, 1000);
+};
+
+subBox.addEventListener("click", () => {
+  subBox.hasAttribute("style")
+    ? subBox.removeAttribute("style")
+    : (subBox.style.right = "0px");
+});
+
 createHeader();
 createMain(teamData);
-setInterval(swapPlayers, 5000);
+timer();
+setInterval(() => {
+  getSwapedPlayers(swapPlayers());
+}, 60000);
