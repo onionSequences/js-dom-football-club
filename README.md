@@ -19,3 +19,8 @@ In this project I learned DOM Traversing, CSS `@keyframe` property and some basi
   <li>HTML5 - for structuring page content.</li>
   <li>CSS3 - for styling content on page.</li>
 </ul>
+
+### Changelog
+- Added LIVE substitution box (<img src="https://img.icons8.com/ios-glyphs/30/000000/player-change.png"/>) - Users can see which player going in and which is out
+- Added button for substitution - Users now can change players right away
+- Added countdown timer till the player substitution
