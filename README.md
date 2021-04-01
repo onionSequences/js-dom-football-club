@@ -1,5 +1,5 @@
 # AC Milan squad (2004/2005 season)
-This application showcase AC Milan squad from 2004/2005 season, with some interaction.
+Showcase AC Milan players in random order, with random substitution on every minute.
 
 ## Demo 
 Here is a working live demo: <a href="https://onionsequences.github.io/js-dom-football-club/" target="_blank">https://onionsequences.github.io/js-dom-football-club/</a>
