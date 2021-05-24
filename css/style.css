@@ -190,38 +190,8 @@ p.sub-heading {
   flex-direction: column;
   margin-top: 20px;
 }
-.progressbar {
-  width: 100%;
-  max-width: 200px;
-  margin: auto;
-  border: solid 1px #c8c8c8;
-  border-radius: 20px;
-  overflow: hidden;
-}
-.progressbar .inner {
-  height: 15px;
-  -webkit-animation: progressbar-countdown 60s linear infinite;
-  animation: progressbar-countdown 60s linear infinite;
-}
-@-webkit-keyframes progressbar-countdown {
-  0% {
-    width: 100%;
-    background: #0f0;
-  }
-  100% {
-    width: 0%;
-    background: #f00;
-  }
-}
-@keyframes progressbar-countdown {
-  0% {
-    width: 100%;
-    background: #0f0;
-  }
-  100% {
-    width: 0%;
-    background: #f00;
-  }
+progress {
+  margin: 0 auto;
 }
 .player-card {
   display: -webkit-box;

@@ -1,139 +1,26 @@
-const teamData = {
-  teamName: "AC Milan",
-  logo: "./img/logo.png",
-  season: "2004/2005",
-  squad: [
-    {
-      image: "./img/1.png",
-      name: "Dida",
-      lastName: "/",
-      playerNumber: 12,
-      position: "Goalkeeper",
-      age: 47,
-    },
-    {
-      image: "./img/2.png",
-      name: "Cafú",
-      lastName: "/",
-      playerNumber: 2,
-      position: "Defender",
-      age: 50,
-    },
-    {
-      image: "./img/3.png",
-      name: "Alessandro",
-      lastName: "Nesta",
-      playerNumber: 13,
-      position: "Defender",
-      age: 44,
-    },
-    {
-      image: "./img/4.png",
-      name: "Paolo",
-      lastName: "Maldini",
-      playerNumber: 3,
-      position: "Defender",
-      age: 52,
-    },
-    {
-      image: "./img/5.png",
-      name: "Serginho",
-      lastName: "/",
-      playerNumber: 27,
-      position: "Defender",
-      age: 49,
-    },
-    {
-      image: "./img/6.png",
-      name: "Andrea",
-      lastName: "Pirlo",
-      playerNumber: 21,
-      position: "Midfielder",
-      age: 41,
-    },
-    {
-      image: "./img/7.png",
-      name: "Gennaro",
-      lastName: "Gattuso",
-      playerNumber: 8,
-      position: "Midfielder",
-      age: 43,
-    },
-    {
-      image: "./img/8.png",
-      name: "Clarence",
-      lastName: "Seedorf",
-      playerNumber: 20,
-      position: "Midfielder",
-      age: 44,
-    },
-    {
-      image: "./img/9.png",
-      name: "Kaká",
-      lastName: "/",
-      playerNumber: 22,
-      position: "Midfielder",
-      age: 38,
-    },
-    {
-      image: "./img/10.png",
-      name: "Andriy",
-      lastName: "Shevchenko",
-      playerNumber: 7,
-      position: "Forward",
-      age: 44,
-    },
-    {
-      image: "./img/11.png",
-      name: "Filippo",
-      lastName: "Inzaghi",
-      playerNumber: 9,
-      position: "Forward",
-      age: 47,
-    },
-    {
-      image: "./img/12.png",
-      name: "Christian",
-      lastName: "Abbiati",
-      playerNumber: 77,
-      position: "Goalkeeper",
-      age: 43,
-    },
-    {
-      image: "./img/13.png",
-      name: "Hernán",
-      lastName: "Crespo",
-      playerNumber: 11,
-      position: "Forward",
-      age: 45,
-    },
-    {
-      image: "./img/14.png",
-      name: "Massimo",
-      lastName: "Ambrosini",
-      playerNumber: 23,
-      position: "Midfielder",
-      age: 43,
-    },
-    {
-      image: "./img/15.png",
-      name: "Jaap",
-      lastName: "Stam",
-      playerNumber: 31,
-      position: "Defender",
-      age: 48,
-    },
-  ],
-};
-const main = document.querySelector("main");
 const subBox = document.querySelector(".substitution-box");
 const subBtn = document.querySelector("button");
-const progressBar = document.querySelector(".inner");
 
-const createHeader = () => {
+const getData = async () => {
+  try {
+    const request = await fetch(
+      "https://ac-milan-squad-app-default-rtdb.firebaseio.com/team.json"
+    );
+    return await request.json();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+getData().then(data => {
+  createHeader(data.logo);
+  createMain(data);
+});
+
+const createHeader = logo => {
   const header = document.querySelector("header");
-  const logo = `<div class="logo"><img src="${teamData.logo}" alt="AC Milan logo"/></div>`;
-  header.innerHTML = logo;
+  const logoDiv = `<div class="logo"><img src="${logo}" alt="AC Milan logo"/></div>`;
+  header.innerHTML = logoDiv;
 };
 
 const createEl = (type, path, cssClass) => {
@@ -144,7 +31,8 @@ const createEl = (type, path, cssClass) => {
   return element;
 };
 
-const createMain = (arr) => {
+const createMain = arr => {
+  const main = document.querySelector("main");
   const firstSqdSection = createEl("section", "", "first-squad");
   const reserveSqdSection = createEl("section", "", "reserve");
   const teamName = createEl("h1", arr.teamName);
@@ -165,7 +53,7 @@ const createMain = (arr) => {
   main.append(reserveSqdSection);
 };
 
-const shuffle = (arr) => {
+const shuffle = arr => {
   for (let i = arr.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
@@ -173,15 +61,15 @@ const shuffle = (arr) => {
   return arr;
 };
 
-const getPlayers = (team) => {
+const getPlayers = team => {
   const wrapper = createEl("div", "", "wrapper");
 
-  team.forEach((player) => wrapper.append(playerCard(player)));
+  team.forEach(player => wrapper.append(playerCard(player)));
 
   return wrapper;
 };
 
-const playerCard = (player) => {
+const playerCard = player => {
   const card = createEl("article", "", "player-card");
   const image = `<img src="${player.image}" alt="${player.name}"/>`;
   const cardInfo = createEl("div", "", "info");
@@ -199,7 +87,7 @@ const playerCard = (player) => {
   return card;
 };
 
-const getRandom = (arr) => Math.floor(Math.random() * arr.length);
+const getRandom = arr => Math.floor(Math.random() * arr.length);
 
 //Change players
 const swapPlayers = () => {
@@ -228,7 +116,7 @@ const swapPlayers = () => {
   return [firstPlayer, reservePlayer];
 };
 
-const getSwapedPlayers = (swapPlayers) => {
+const getSwapedPlayers = swapPlayers => {
   const substitutionIn = document.querySelector("div.in > p");
   const substitutionOut = document.querySelector("div.out > p");
   let [outPlayer, inPlayer] = swapPlayers;
@@ -241,31 +129,34 @@ const getSwapedPlayers = (swapPlayers) => {
     inPlayer.lastChild.firstChild.innerHTML.slice(5);
 };
 
-subBtn.addEventListener("click", () => {
-  progressBar.removeAttribute("class");
-  clearInterval(window.subTimer);
-  getSwapedPlayers(swapPlayers());
+const timer = () => {
+  let timeleft = 60;
+  let countdown = document.querySelector("progress");
+  let countdownText = document.querySelector("#countdown");
 
+  return (window.counter = setInterval(() => {
+    timeleft--;
+    countdown.value = timeleft;
+    countdownText.innerHTML = timeleft;
+
+    if (!timeleft) {
+      timeleft = 60;
+      countdown.value = timeleft;
+      countdownText.innerHTML = timeleft;
+      getSwapedPlayers(swapPlayers());
+    }
+  }, 1000));
+};
+
+subBtn.addEventListener("click", () => {
+  getSwapedPlayers(swapPlayers());
+  clearInterval(window.counter);
+  document.querySelector("progress").value = 60;
+  document.querySelector("#countdown").innerHTML = 60;
   setTimeout(() => {
     timer();
-    progressBar.setAttribute("class", "inner");
-  }, 1);
+  }, 0);
 });
-
-const timer = () => {
-  const nextSubTime = document.querySelector(
-    ".substitution-timer > p:nth-child(2)"
-  );
-  let startTime = 60;
-
-  nextSubTime.innerHTML = `${startTime}s`;
-
-  window.subTimer = setInterval(() => {
-    startTime === 1 ? (startTime = 60) : startTime--;
-
-    nextSubTime.innerHTML = `${startTime}s`;
-  }, 1000);
-};
 
 subBox.addEventListener("click", () => {
   subBox.hasAttribute("style")
@@ -273,9 +164,4 @@ subBox.addEventListener("click", () => {
     : (subBox.style.right = "0px");
 });
 
-createHeader();
-createMain(teamData);
 timer();
-setInterval(() => {
-  getSwapedPlayers(swapPlayers());
-}, 60000);
